@@ -1,0 +1,112 @@
+[General]
+loglevel = notify
+dns-server = system, 119.29.29.29, 223.6.6.6, 80.80.80.80
+skip-proxy = 127.0.0.1, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10, 17.0.0.0/8, localhost, *.local, *.crashlytics.com
+external-controller-access = MixChina@0.0.0.0:8233
+allow-wifi-access = true
+enhanced-mode-by-rule = ture
+exclude-simple-hostnames = true
+ipv6 = true
+replica = false
+http-listen = 0.0.0.0:8234
+socks5-listen = 0.0.0.0:8235
+internet-test-url = http://baidu.com
+proxy-test-url = http://bing.com
+test-timeout = 3
+# > 隐藏状态栏上的VPN图标
+hide-vpn-icon = true
+
+[Replica]
+hide-apple-request = true
+hide-crashlytics-request = true
+hide-udp = false
+use-keyword-filter = false
+
+[Proxy]
+Direct = direct
+Reject = reject
+
+[Proxy Group]
+Proxy = select, JP, SG, US, HK, TW
+Final = select, Proxy, Direct, hidden=1
+WeChat = select, US, HK, TW, JP, SG, Direct
+Telegram = select, HK, SG, US, hidden=1
+Streaming = select, HK, TW, JP, SG, US, hidden=1
+HK = url-test, policy-path="机场"， interval=600, tolerance=50, update-interval=86400, policy-regex-filter=(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|美)).)*$, hidden=0
+TW = url-test, policy-path="机场", interval=600, tolerance=50, update-interval=86400, policy-regex-filter=(?=.*(台|TW|(?i)Taiwan))^((?!(港|日|韩|新|美)).)*$, hidden=1
+JP = url-test, policy-path="机场", interval=600, tolerance=50, update-interval=86400, policy-regex-filter=(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$, hidden=0
+SG = url-test, policy-path="机场", interval=600, tolerance=50, update-interval=86400, policy-regex-filter=(?=.*(新|狮|獅|SG|(?i)Singapore))^((?!(港|台|日|韩|美)).)*$, hidden=1
+KR = url-test, interval=600, tolerence=50, update-interval=86400, policy-regex-filter=(?=.*(韩国|韓國|Korea|KR|首尔))^((?!(香港|台湾|日本|美国|US|JP|HK|TW|台灣|美國)).)*$, no-alert=0, hidden=0, policy-path="机场"
+US = url-test, policy-path="机场", interval=600, tolerance=50, update-interval=86400, policy-regex-filter=(?=.*(美|US|(?i)States|American))^((?!(港|台|日|韩|新)).)*$, hidden=0
+
+[Rule]
+# 全球加速
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Global.list,Proxy
+# 后续规则修正
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Unbreak.list,Direct
+# 广告拦截
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Advertising.list,Reject
+DOMAIN-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/AdvertisingPlus.list,Reject
+DOMAIN-SET,https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-surge2.txt,Reject
+# 隐私保护
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Privacy.list,Reject
+# 应用内追踪
+DOMAIN-SET,https://raw.githubusercontent.com/mieqq/mieqq/master/In-AppTracker.txt,Reject
+# 运营商劫持或恶意网站
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Hijacking.list,Reject
+# WeChat (此规则仅针对WeChat绑定Google Voice的用户。+86、港、澳、台用户可直接Direct。)
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Extra/WeChat/WeChatSG.list,WeChat
+# Apple 服务
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Extra/Apple/Apple.list,Direct
+# 中国直连
+RULE-SET,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/China.list,Direct
+# GeoIP China
+GEOIP,CN,Direct
+FINAL,Final,dns-failed
+
+[Host]
+localhost = 127.0.0.1
+syria.sy = 127.0.0.1
+
+[URL Rewrite]
+# Google_Service_HTTPS_Jump
+^https?:\/\/(www\.)?g\.cn https://www.google.com 302
+^https?:\/\/(www\.)?google\.cn https://www.google.com 302
+# > Fake Website Made By C&J Marketing
+^https?:\/\/(www.)?abbyychina\.com\/ https://www.abbyy.cn/ 302
+^https?:\/\/(www.)?anydeskchina.cn/ https://anydesk.com/zhs 302
+# Wiki
+^https?:\/\/.+.(m\.)?wikipedia\.org/wiki http://www.wikiwand.com/en 302
+^https?:\/\/zh.(m\.)?wikipedia\.org/(zh-hans|zh-sg|zh-cn|zh(?=/)) http://www.wikiwand.com/zh 302
+^https?:\/\/zh.(m\.)?wikipedia\.org/zh-[a-zA-Z]{2,} http://www.wikiwand.com/zh-hant 302
+
+[Header Rewrite]
+^https?://www.zhihu.com/question/ header-replace User-Agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.45 Safari/537.36"
+
+[MITM]
+skip-server-cert-verify = true
+hostname = duckduckgo.com, sub.store, boxer.baidu.com, api.weibo.cn, mapi.weibo.com, *.uve.weibo.com, -*.weibo.com, mp.weixin.qq.com, security.wechat.com, weixin110.qq.com, vip1.kuwo.cn, testflight.apple.com, pan.baidu.com, weather-data.apple.com
+
+[Script]
+Sub-Store = type=http-request,pattern=^https?:\/\/sub\.store,script-path=https://raw.githubusercontent.com/Peng-YM/Sub-Store/master/backend/sub-store.min.js,requires-body=true,timeout=120,max-size=131072
+百度搜索防跳转 = type=http-response,pattern=^https?\:\/\/boxer\.baidu\.com\/scheme,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/baidu-no-redirect.js
+微博去广告 = type=http-response,pattern=^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/wbapplua/wbpullad.lua),requires-body=1,max-size=0,timeout=30,script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_launch.js
+微博去广告 = type=http-response,pattern=^https?://m?api\.weibo\.c(n|om)/2/(statuses/(unread|extend|positives/get|(friends|video)(/|_)(mix)?timeline)|stories/(video_stream|home_list)|(groups|fangle)/timeline|profile/statuses|comments/build_comments|photo/recommend_list|service/picfeed|searchall|cardlist|page|!/photos/pic_recommend_status|video/tiny_stream_video_list|photo/info),requires-body=1,max-size=-1,timeout=30,script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_ad.js
+微信去除公众号文章底部广告 = type=http-request,pattern=^https://mp\.weixin\.qq\.com/mp/getappmsgad,timeout=30,script-path=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/File/Wechat.js
+解除微信链接限制 = type=http-response,pattern=^https\:\/\/(weixin110\.qq|security.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\?,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js
+酷我音乐VIP = type=http-response,pattern=^https?:\/\/vip1\.kuwo\.cn\/(vip\/v2\/user\/vip|vip\/spi/mservice),requires-body=1,max-size=0,timeout=60,script-path=https://raw.githubusercontent.com/NobyDa/Script/master/Surge/JS/Kuwo.js
+TestFlight下载修正 = type=http-request,pattern=^https?:\/\/testflight\.apple\.com\/v\d\/accounts\/.+?\/install$,requires-body=1,max-size=0,script-path=https://gist.githubusercontent.com/NobyDa/9be418b93afc5e9c8a8f4d28ae403cf2/raw/TF_Download.js
+疫情播报 = type=cron,cronexp=0 8-22/3 * * *,wake-system=1,timeout=60,script-path=https://raw.githubusercontent.com/Peng-YM/QuanX/master/Tasks/nCov.js
+节假日倒计时 = type=generic,timeout=10,script-path=https://raw.githubusercontent.com/Jimmyzsan/Surge-/main/holiday,script-update-interval=0
+疫情统计 = type=generic,script-path=https://raw.githubusercontent.com/Jimmyzsan/Surge-/main/Covid19counting,script-update-interval=0
+网络信息 = type=generic,timeout=5,script-path=https://raw.githubusercontent.com/TributePaulWalker/Profiles/main/JavaScript/Surge/ipcheck.js
+配置重载 = script-path=https://raw.githubusercontent.com/TributePaulWalker/Profiles/main/JavaScript/Surge/Profile-Reload.js,type=generic
+
+[Panel]
+节假日倒计时 = script-name=节假日倒计时,update-interval=600
+疫情统计 = script-name=疫情统计,title=新冠疫情查询,content=请刷新,update-interval=600
+网络信息 = script-name=网络信息,title=网络信息,content=请刷新,style=info,update-interval=60
+配置重载 = title=配置重载,content=配置重载,style=info,script-name=配置重载,update-interval=-1
+
+
+
