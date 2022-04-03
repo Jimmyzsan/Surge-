@@ -1,4 +1,4 @@
-var list = ['中国', '北京', '西城', '朝阳', '东城', '海淀']
+var list = ['中国', '北京', '西城区', '朝阳区', '东城区', '海淀区']
 const url = 'https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5'
 var ala = ''
 function nowtime() {
